@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 20s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+:root {
+  /* Beyaza çok yakın, zarif bir kırık beyaz/krem rengi */
+  --cream-bg: #FAF9F6; 
+}
+
+body {
+  background-color: var(--cream-bg);
+}
+
+.content-wrapper {
+  background-image: url('/zekran.jpg');
+  background-repeat: repeat; 
+  background-position: center; 
+}
