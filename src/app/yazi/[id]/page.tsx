@@ -32,8 +32,8 @@ export default async function ReadingPage({ params }: { params: Promise<{ id: st
   const coverUrl = resolveMediaUrl(post.cover_url)
 
   return (
-    <main className="w-full min-h-screen bg-[url('/zekran.jpg')] bg-fixed bg-repeat bg-center">
-      <div className="w-full min-h-screen bg-white/30">
+    <main className="w-full min-h-screen bg-transparent">
+      <div className="w-full min-h-screen bg-transparent">
         {/* Centered Container for the entire page content */}
         <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20 bg-transparent relative shadow-2xl">
           <div className="relative z-10 bg-transparent">

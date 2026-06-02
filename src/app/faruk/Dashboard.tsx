@@ -2,44 +2,51 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Image, FileText, Send, ChevronRight, Sparkles, Settings2 } from 'lucide-react'
+import { Image, FileText, Send, ChevronRight, Sparkles, Settings2, UserPlus } from 'lucide-react'
 
-export default function AdminDashboard() {
+export default function Dashboard() {
   const cards = [
     {
       title: 'Medya',
       desc: 'Görsel kütüphanesini yönetin ve yeni dosyalar yükleyin.',
       icon: <Image size={32} />,
-      href: '/admin/media',
+      href: '/faruk/media',
       color: 'bg-blue-500',
     },
     {
       title: 'Metinler',
       desc: 'Zengin içerikli makale ve tanıtım metinleri oluşturun.',
       icon: <FileText size={32} />,
-      href: '/admin/texts',
+      href: '/faruk/texts',
       color: 'bg-emerald-500',
     },
     {
       title: 'Eski Yayınlar',
       desc: 'Önceden paylaştığınız içerikleri yönetin.',
       icon: <Sparkles size={32} />,
-      href: '/admin/posts',
+      href: '/faruk/posts',
       color: 'bg-purple-500',
     },
     {
       title: 'Menü Düzenle',
       desc: 'Sidebar navigasyon yapısını yönetin.',
       icon: <Settings2 size={32} />,
-      href: '/admin/categories',
+      href: '/faruk/categories',
       color: 'bg-orange-500',
     },
     {
       title: 'Yayınla',
       desc: 'Görsel ve metinleri birleştirerek canlıya alın.',
       icon: <Send size={32} />,
-      href: '/admin/publish',
+      href: '/faruk/publish',
       color: 'bg-black',
+    },
+    {
+      title: 'Kullanıcı Ekle',
+      desc: 'Yeni yönetim veya editör yetkilisi oluşturun.',
+      icon: <UserPlus size={32} />,
+      href: '/faruk/users',
+      color: 'bg-zinc-800',
     },
   ]
 

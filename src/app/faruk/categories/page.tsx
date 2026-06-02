@@ -36,6 +36,7 @@ import {
   Menu
 } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
+import { saveCategory, deleteCategory, batchUpdateCategories } from '../dbActions'
 
 interface Category {
   id: string
@@ -247,19 +248,15 @@ export default function CategoriesPage() {
     const orderIndex = rawCategories.filter(c => c.parent_id === parentId).length
 
     try {
-      const { error: dbError } = await supabase
-        .from('categories')
-        .insert([{ 
-          name: trimmedName, 
-          slug, 
-          parent_id: parentId, 
-          order_index: orderIndex 
-        }])
-
-      if (dbError) throw dbError
+      await saveCategory({
+        name: trimmedName,
+        slug,
+        parent_id: parentId,
+        order_index: orderIndex
+      })
       fetchCategories()
     } catch (error: any) {
-      console.error('Ekleme hatası:', JSON.stringify(error))
+      console.error('Ekleme hatası:', error)
       alert(`Kategori eklenemedi: ${error.message || 'Bilinmeyen hata'}`)
     }
   }
@@ -267,16 +264,20 @@ export default function CategoriesPage() {
   const handleRename = async (id: string, newName: string) => {
     const trimmedName = newName.trim()
     const slug = generateSlug(trimmedName)
-    try {
-      const { error: dbError } = await supabase
-        .from('categories')
-        .update({ name: trimmedName, slug })
-        .eq('id', id)
+    const cat = rawCategories.find(c => c.id === id)
+    if (!cat) return
 
-      if (dbError) throw dbError
+    try {
+      await saveCategory({
+        id,
+        name: trimmedName,
+        slug,
+        parent_id: cat.parent_id,
+        order_index: cat.order_index
+      })
       setRawCategories(prev => prev.map(c => c.id === id ? { ...c, name: trimmedName, slug } : c))
     } catch (error: any) {
-      console.error('Güncelleme hatası:', JSON.stringify(error))
+      console.error('Güncelleme hatası:', error)
       alert(`Kategori güncellenemedi: ${error.message || 'Bilinmeyen hata'}`)
     }
   }
@@ -285,15 +286,10 @@ export default function CategoriesPage() {
     if (!confirm('Bu kategoriyi ve tüm alt kategorilerini silmek istediğinize emin misiniz?')) return
 
     try {
-      const { error: dbError } = await supabase
-        .from('categories')
-        .delete()
-        .eq('id', id)
-
-      if (dbError) throw dbError
+      await deleteCategory(id)
       fetchCategories()
     } catch (error: any) {
-      console.error('Silme hatası:', JSON.stringify(error))
+      console.error('Silme hatası:', error)
       alert(`Kategori silinemedi: ${error.message || 'Bilinmeyen hata'}`)
     }
   }
@@ -315,12 +311,17 @@ export default function CategoriesPage() {
     // Sadece aynı seviyedeki sıralamayı yapıyoruz (Basitlik ve sağlamlık için)
     if (activeItem.parent_id !== overItem.parent_id) {
       // Ebeveyn değiştirme logic'i (Opsiyonel: Gelişmiş sürükle bırak)
-      const { error } = await supabase
-        .from('categories')
-        .update({ parent_id: overItem.parent_id })
-        .eq('id', active.id)
-      
-      if (error) console.error('Taşıma hatası:', JSON.stringify(error))
+      try {
+        await saveCategory({
+          id: active.id as string,
+          name: activeItem.name,
+          slug: activeItem.slug,
+          parent_id: overItem.parent_id,
+          order_index: activeItem.order_index
+        })
+      } catch (err) {
+        console.error('Taşıma hatası:', err)
+      }
       fetchCategories()
       return
     }
@@ -344,14 +345,10 @@ export default function CategoriesPage() {
     }))
 
     try {
-      const { error: dbError } = await supabase
-        .from('categories')
-        .upsert(updates, { onConflict: 'id' })
-
-      if (dbError) throw dbError
+      await batchUpdateCategories(updates)
       fetchCategories()
     } catch (error: any) {
-      console.error('Sıralama hatası:', JSON.stringify(error))
+      console.error('Sıralama hatası:', error)
       alert(`Sıralama kaydedilemedi: ${error.message || 'Bilinmeyen hata'}`)
     }
   }

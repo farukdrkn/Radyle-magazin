@@ -22,6 +22,7 @@ import {
   ChevronLeft
 } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
+import { savePublishedPage } from '../dbActions'
 
 interface TextRecord {
   id: string
@@ -216,14 +217,15 @@ function PublishPageContent() {
 
     try {
       if (editId) {
-        const { error } = await supabase.from('published_pages').update(payload).eq('id', editId)
-        if (error) throw error
+        await savePublishedPage({
+          id: editId,
+          ...payload
+        })
       } else {
-        const { error } = await supabase.from('published_pages').insert([payload])
-        if (error) throw error
+        await savePublishedPage(payload)
       }
       alert('Başarıyla kaydedildi!')
-      router.push('/admin/posts')
+      router.push('/faruk/posts')
     } catch (error: any) {
       console.error('Kaydetme hatası:', error)
       alert(`Hata: ${error.message || 'Bilinmeyen hata'}`)
@@ -233,7 +235,7 @@ function PublishPageContent() {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] flex bg-[#fdfdfd] overflow-hidden">
+    <div className="h-[calc(100vh-64px)] flex bg-transparent overflow-hidden">
       {/* 3-TAB WORKFLOW CONTROLLER */}
       <aside className="w-80 bg-white border-r border-gray-100 flex flex-col shrink-0 shadow-sm z-20">
         <div className="flex border-b border-gray-50">
@@ -384,7 +386,7 @@ function PublishPageContent() {
       </aside>
 
       {/* MAIN CANVAS AREA */}
-      <main className="flex-1 overflow-y-auto p-10 bg-[#fafafa] custom-scrollbar relative">
+      <main className="flex-1 overflow-y-auto p-10 bg-transparent custom-scrollbar relative">
         <header className="max-w-5xl mx-auto mb-12 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm border border-gray-100">
@@ -524,7 +526,7 @@ function PublishPageContent() {
 export default function PublishPage() {
   return (
     <Suspense fallback={
-      <div className="flex h-screen w-screen items-center justify-center bg-[#fdfdfd]">
+      <div className="flex h-screen w-screen items-center justify-center bg-transparent">
         <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
       </div>
     }>

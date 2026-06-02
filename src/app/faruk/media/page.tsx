@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { saveMedia, deleteMedia } from '../dbActions'
 import { 
   Upload, 
   X, 
@@ -217,25 +218,17 @@ export default function MediaPage() {
 
       // 4. VERİTABANI GÜNCELLEME VEYA EKLEME
       if (editingItem) {
-        const { error: dbError } = await supabase
-          .from('media')
-          .update({ 
-            file_name: sanitizedName, 
-            file_url: publicUrl 
-          })
-          .eq('id', editingItem.id)
-
-        if (dbError) throw dbError
+        await saveMedia({
+          id: editingItem.id,
+          file_name: sanitizedName,
+          file_url: publicUrl
+        })
       } else {
-        const { error: dbError } = await supabase
-          .from('media')
-          .insert([{ 
-            file_name: sanitizedName, 
-            file_url: publicUrl, 
-            storage_path: uploadData.path 
-          }])
-
-        if (dbError) throw dbError
+        await saveMedia({
+          file_name: sanitizedName,
+          file_url: publicUrl,
+          storage_path: uploadData.path
+        })
       }
 
       await fetchImages()
@@ -253,12 +246,10 @@ export default function MediaPage() {
     setUploading(true)
     try {
       const sanitizedName = sanitizeFileName(fileName)
-      const { error } = await supabase
-        .from('media')
-        .update({ file_name: sanitizedName })
-        .eq('id', editingItem.id)
-      
-      if (error) throw error
+      await saveMedia({
+        id: editingItem.id,
+        file_name: sanitizedName
+      })
       
       // Update local state directly for immediate feedback
       setImages(images.map(img => 
@@ -278,28 +269,7 @@ export default function MediaPage() {
     if (!confirm('Bu görseli silmek istediğinize emin misiniz?')) return
 
     try {
-      // 1. Delete from Storage (using the exact storage_path from DB)
-      const { error: storageError } = await supabase.storage
-        .from('media')
-        .remove([item.storage_path])
-
-      if (storageError) {
-        console.error('Storage deletion error:', storageError)
-        // Storage'da dosya bulunamasa bile DB kaydını silmeye devam edebiliriz 
-        // veya burada durabiliriz. Güvenli tarafta kalıp devam ediyoruz.
-      }
-
-      // 2. Delete from Database
-      const { error: dbError } = await supabase
-        .from('media')
-        .delete()
-        .eq('id', item.id)
-
-      if (dbError) {
-        console.error('Database Delete Error:', JSON.stringify(dbError))
-        throw new Error(`Veritabanı Hatası: ${dbError.message}`)
-      }
-
+      await deleteMedia(item.id, item.storage_path)
       setImages(images.filter(img => img.id !== item.id))
     } catch (error: any) {
       console.error('Delete Error Detail:', error)

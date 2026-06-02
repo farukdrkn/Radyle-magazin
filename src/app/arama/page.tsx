@@ -61,8 +61,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   }
 
   return (
-    <main className="w-full min-h-screen bg-[url('/zekran.jpg')] bg-fixed bg-repeat bg-center">
-      <div className="w-full min-h-screen bg-white/30">
+    <main className="w-full min-h-screen bg-transparent">
+      <div className="w-full min-h-screen bg-transparent">
         <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20 py-10 sm:py-20">
           
           {/* Header section of the search results */}

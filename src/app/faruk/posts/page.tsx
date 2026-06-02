@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Edit2, Eye, Trash2, Calendar, Tag, Loader2, Search, FileX } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
+import { deletePublishedPage } from '../dbActions'
 
 interface PublishedPage {
   id: string
@@ -48,28 +49,22 @@ export default function PastPostsPage() {
 
     setIsDeleting(id)
     try {
-      const { error: dbError } = await supabase
-        .from('published_pages')
-        .delete()
-        .eq('id', id)
-
-      if (dbError) throw dbError
-      
+      await deletePublishedPage(id)
       setPosts(prev => prev.filter(post => post.id !== id))
     } catch (error: any) {
-      console.error('Silme hatası:', JSON.stringify(error))
+      console.error('Silme hatası:', error)
       alert('Silme işlemi sırasında bir hata oluştu.')
     } finally {
       setIsDeleting(null)
     }
   }
 
-  const handleView = (slug: string) => {
-    window.open(`/posts/${slug}`, '_blank')
+  const handleView = (id: string) => {
+    window.open(`/yazi/${id}`, '_blank')
   }
 
   const handleEdit = (id: string) => {
-    router.push(`/admin/publish?id=${id}`)
+    router.push(`/faruk/publish?id=${id}`)
   }
 
   return (
@@ -135,7 +130,7 @@ export default function PastPostsPage() {
                     Düzenle
                   </button>
                   <button 
-                    onClick={() => handleView(post.slug)}
+                    onClick={() => handleView(post.id)}
                     className="w-14 h-14 border-2 border-gray-50 rounded-2xl flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all hover:border-blue-100 active:scale-90"
                     title="Görüntüle"
                   >

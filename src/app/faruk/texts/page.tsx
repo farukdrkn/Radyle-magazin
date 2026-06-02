@@ -22,6 +22,7 @@ import {
   RefreshCw
 } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
+import { saveText, deleteText } from '../dbActions'
 
 // 8+ Renkten oluşan geniş palet
 const COLORS = [
@@ -217,20 +218,14 @@ export default function TextsPage() {
 
     try {
       if (selectedId) {
-        // UPDATE
-        const { error: dbError } = await supabase
-          .from('texts')
-          .update(payload)
-          .eq('id', selectedId)
-
-        if (dbError) throw dbError
+        // UPDATE using Server Action
+        await saveText({
+          id: selectedId,
+          ...payload
+        })
       } else {
-        // INSERT
-        const { error: dbError } = await supabase
-          .from('texts')
-          .insert([payload])
-
-        if (dbError) throw dbError
+        // INSERT using Server Action
+        await saveText(payload)
         
         // Yeni kayıt sonrası alanları temizleme
         setTitle('')
@@ -241,8 +236,7 @@ export default function TextsPage() {
       await fetchTexts()
       alert('Başarıyla kaydedildi!')
     } catch (dbError: any) {
-      // Hata objesini boş {} görünümünü engellemek için JSON.stringify ile net şekilde logluyoruz
-      console.error('Kayıt hatası:', JSON.stringify(dbError))
+      console.error('Kayıt hatası:', dbError)
       alert(`Kayıt sırasında bir hata oluştu: ${dbError?.message || 'Bilinmeyen hata (Konsolu inceleyin)'}`)
     } finally {
       setIsSaving(false)
@@ -253,22 +247,21 @@ export default function TextsPage() {
     e.stopPropagation()
     if (!confirm('Bu metni silmek istediğinize emin misiniz?')) return
 
-    const { error } = await supabase.from('texts').delete().eq('id', id)
-    if (error) {
-      console.error('Silme hatası:', JSON.stringify(error))
-      alert('Silme işlemi başarısız oldu.')
-    } else {
+    try {
+      await deleteText(id)
       if (selectedId === id) {
         setSelectedId(null)
         setTitle('')
         editor?.commands.setContent('')
       }
-      fetchTexts()
+      await fetchTexts()
+    } catch (error: any) {
+      console.error('Silme hatası:', error)
     }
   }
 
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-[#fdfdfd] overflow-hidden">
+    <div className="flex h-[calc(100vh-64px)] bg-transparent overflow-hidden">
       {/* Sidebar - Geçmiş Metinler Listesi */}
       <aside className="w-72 border-r border-gray-100 bg-white flex flex-col shrink-0">
         <div className="p-6 border-b border-gray-50">
@@ -327,7 +320,7 @@ export default function TextsPage() {
       </aside>
 
       {/* Ana İçerik - Editör Bölümü */}
-      <main className="flex-1 overflow-y-auto p-10 bg-[#fafafa]">
+      <main className="flex-1 overflow-y-auto p-10 bg-transparent">
         <div className="max-w-4xl mx-auto space-y-10">
           <header className="flex justify-between items-center">
             <div className="space-y-1.5">

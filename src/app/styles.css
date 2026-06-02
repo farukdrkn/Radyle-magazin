@@ -22,11 +22,18 @@
 }
 
 body {
-  background-color: var(--cream-bg);
 }
 
 .content-wrapper {
   background-image: url('/zekran.jpg');
   background-repeat: repeat; 
   background-position: center; 
+}
+
+.zekran-bg {
+  background-image: url('/zekran.jpg') !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 }

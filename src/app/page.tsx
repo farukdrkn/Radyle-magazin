@@ -32,8 +32,8 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="w-full min-h-screen bg-[url('/zekran.jpg')] bg-fixed bg-repeat bg-center">
-      <div className="w-full min-h-screen bg-white/30">
+    <main className="w-full min-h-screen bg-transparent">
+      <div className="w-full min-h-screen bg-transparent">
         <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20 py-10 sm:py-20">
           {/* Staggered Grid Layout */}
           <div className="grid grid-cols-3 md:grid-cols-5 gap-6 md:gap-8 items-start">
