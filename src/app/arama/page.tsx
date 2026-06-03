@@ -70,10 +70,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <h1 className="text-sm font-black uppercase tracking-[0.4em] text-blue-600 mb-2">
               Arama Sonuçları
             </h1>
-            <p className="text-2xl sm:text-4xl font-black uppercase tracking-tighter text-gray-900">
+            <p className="text-2xl sm:text-4xl font-black uppercase tracking-tighter text-black dark:text-white">
               &ldquo;{q}&rdquo;
             </p>
-            <div className="w-12 h-1 bg-indigo-600 mx-auto mt-4 rounded-full" />
+            <div className="w-12 h-1 bg-indigo-600 dark:bg-indigo-500 mx-auto mt-4 rounded-full" />
           </div>
 
           {posts.length > 0 ? (
@@ -91,15 +91,15 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           ) : (
             /* 0 RESULTS VIEW */
             <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-              <div className="w-20 h-20 mb-8 rounded-full bg-white/60 shadow-lg border border-black/5 flex items-center justify-center">
-                <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-20 h-20 mb-8 rounded-full bg-white/60 dark:bg-zinc-800/60 shadow-lg border border-black/5 dark:border-white/5 flex items-center justify-center">
+                <svg className="w-8 h-8 text-gray-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-              <h2 className="text-xl md:text-2xl font-black text-gray-900 uppercase tracking-widest max-w-2xl leading-tight">
+              <h2 className="text-xl md:text-2xl font-black text-gray-900 dark:text-white uppercase tracking-widest max-w-2xl leading-tight">
                 Arama Sonuçları: &apos;{q}&apos; için 0 SONUÇ BULUNDU
               </h2>
-              <p className="text-[11px] text-gray-500 font-bold uppercase tracking-widest mt-4 max-w-md leading-relaxed">
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400 font-bold uppercase tracking-widest mt-4 max-w-md leading-relaxed">
                 Aradığınız kelimeye uygun bir içerik dergimizde yer almıyor. Farklı kelimelerle tekrar aramayı deneyebilirsiniz.
               </p>
               <Link 
@@ -112,8 +112,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           )}
 
           {/* Footer */}
-          <footer className="w-full mt-40 pb-20 text-center border-t border-black/5 pt-20">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">
+          <footer className="w-full mt-40 pb-20 text-center border-t border-black/5 dark:border-white/5 pt-20">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-zinc-500">
               © 2026 Radyle Magazine
             </p>
           </footer>

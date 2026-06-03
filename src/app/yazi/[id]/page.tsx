@@ -1,10 +1,56 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 
 interface LayoutBlock {
   text: string
   imageUrl: string | null
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: post } = await supabase
+    .from('published_pages')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (!post) return {}
+
+  const getPlainText = (html: string) => {
+    if (!html) return ''
+    return html.replace(/<[^>]*>?/gm, '').trim()
+  }
+
+  const excerpt = post.layout_data && post.layout_data.length > 0 
+    ? getPlainText(post.layout_data[0].text).substring(0, 150) + '...'
+    : 'Radyle Magazine makalesi.'
+
+  const resolveMediaUrl = (path: string | null) => {
+    if (!path) return ''
+    if (path.startsWith('http')) return path
+    const { data } = supabase.storage.from('media').getPublicUrl(path)
+    return data.publicUrl
+  }
+
+  const coverUrl = resolveMediaUrl(post.cover_url)
+
+  return {
+    title: post.title,
+    description: excerpt,
+    openGraph: {
+      title: post.title,
+      description: excerpt,
+      images: coverUrl ? [{ url: coverUrl }] : [],
+    },
+  }
 }
 
 export default async function ReadingPage({ params }: { params: Promise<{ id: string }> }) {
@@ -87,7 +133,7 @@ export default async function ReadingPage({ params }: { params: Promise<{ id: st
                         <span className="text-[10px] font-black text-indigo-600/60 uppercase tracking-[0.4em]">Bölüm 0{index + 1}</span>
                       </div>
                       <div 
-                        className="prose prose-zinc max-w-none prose-p:text-lg prose-p:md:text-xl prose-p:leading-relaxed prose-p:text-gray-800 prose-p:italic prose-p:font-serif overflow-hidden break-words"
+                        className="prose prose-zinc dark:prose-invert max-w-none prose-p:text-lg prose-p:md:text-xl prose-p:leading-relaxed prose-p:text-gray-800 dark:prose-p:text-white prose-p:italic prose-p:font-serif overflow-hidden break-words"
                         dangerouslySetInnerHTML={{ __html: block.text }}
                       />
                     </div>
@@ -110,13 +156,13 @@ export default async function ReadingPage({ params }: { params: Promise<{ id: st
             </div>
 
             {/* Footer */}
-            <footer className="w-full py-20 text-center bg-white/30 backdrop-blur-xl">
+            <footer className="w-full py-20 text-center bg-black/5 dark:bg-black/25 border-t border-black/5 dark:border-white/10 backdrop-blur-xl">
                <div className="mb-8">
-                 <Link href="/" className="text-gray-400 hover:text-indigo-600 transition-colors text-[10px] font-black uppercase tracking-[0.4em]">
+                 <Link href="/" className="text-zinc-500 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white transition-colors text-[10px] font-black uppercase tracking-[0.4em]">
                    Radyle Magazin Ana Sayfa
                  </Link>
                </div>
-               <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-300">© 2026 Radyle Magazine</p>
+               <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400 dark:text-zinc-500">© 2026 Radyle Magazine</p>
             </footer>
           </div>
         </div>

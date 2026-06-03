@@ -48,8 +48,8 @@ export default async function HomePage() {
           </div>
 
           {/* Footer */}
-          <footer className="w-full mt-40 pb-20 text-center border-t border-black/5 pt-20">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">
+          <footer className="w-full mt-40 pb-20 text-center border-t border-white/10 pt-20">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-300 dark:text-zinc-400">
               © 2026 Radyle Magazine
             </p>
           </footer>

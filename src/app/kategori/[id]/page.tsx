@@ -2,21 +2,51 @@ import { createClient } from '@/utils/supabase/server'
 import PostCard from '@/components/PostCard'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 
 interface CategoryPageProps {
   params: Promise<{ id: string }>
+}
+
+export async function generateMetadata({
+  params,
+}: CategoryPageProps): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+
+  // Fetch the specific category details (match by id or slug)
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
+  const query = supabase.from('categories').select('*')
+  if (isUuid) {
+    query.eq('id', id)
+  } else {
+    query.eq('slug', id)
+  }
+  const { data: category } = await query.maybeSingle()
+
+  if (!category) return {}
+
+  const capitalizedName = category.name.charAt(0).toUpperCase() + category.name.slice(1)
+
+  return {
+    title: capitalizedName,
+    description: `Radyle Magazine '${category.name}' kategorisindeki en yeni ve popüler yazılar.`,
+  }
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { id } = await params
   const supabase = await createClient()
 
-  // Fetch the specific category details
-  const { data: category, error: categoryError } = await supabase
-    .from('categories')
-    .select('*')
-    .eq('id', id)
-    .maybeSingle()
+  // Fetch the specific category details (match by id or slug)
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
+  const query = supabase.from('categories').select('*')
+  if (isUuid) {
+    query.eq('id', id)
+  } else {
+    query.eq('slug', id)
+  }
+  const { data: category, error: categoryError } = await query.maybeSingle()
 
   if (categoryError || !category) {
     return notFound()
@@ -24,15 +54,15 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   // Determine all category IDs to fetch posts from
   // (If parent category, include all subcategories)
-  let categoryIds = [id]
+  let categoryIds = [category.id]
   if (!category.parent_id) {
     const { data: subCats } = await supabase
       .from('categories')
       .select('id')
-      .eq('parent_id', id)
+      .eq('parent_id', category.id)
     
     if (subCats && subCats.length > 0) {
-      categoryIds = [id, ...subCats.map(c => c.id)]
+      categoryIds = [category.id, ...subCats.map(c => c.id)]
     }
   }
 
@@ -75,10 +105,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <h1 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-600 mb-2">
               Kategori
             </h1>
-            <p className="text-2xl sm:text-4xl font-black uppercase tracking-tighter text-gray-900">
+            <p className="text-2xl sm:text-4xl font-black uppercase tracking-tighter text-gray-900 dark:text-white">
               {category.name}
             </p>
-            <div className="w-12 h-1 bg-indigo-600 mx-auto mt-4 rounded-full" />
+            <div className="w-12 h-1 bg-indigo-600 dark:bg-indigo-500 mx-auto mt-4 rounded-full" />
           </div>
 
           {posts && posts.length > 0 ? (
@@ -96,15 +126,15 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           ) : (
             /* EMPTY STATE VIEW */
             <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-              <div className="w-20 h-20 mb-8 rounded-full bg-white/60 shadow-lg border border-black/5 flex items-center justify-center">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-20 h-20 mb-8 rounded-full bg-white/60 dark:bg-zinc-800/60 shadow-lg border border-black/5 dark:border-white/5 flex items-center justify-center">
+                <svg className="w-8 h-8 text-gray-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <h2 className="text-xl font-black text-gray-900 uppercase tracking-widest max-w-2xl leading-tight">
+              <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-widest max-w-2xl leading-tight">
                 Bu kategoride henüz yazı bulunmamaktadır
               </h2>
-              <p className="text-[11px] text-gray-500 font-bold uppercase tracking-widest mt-4 max-w-md leading-relaxed">
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400 font-bold uppercase tracking-widest mt-4 max-w-md leading-relaxed">
                 Dergi editörlerimiz bu kategoriye ait yeni yazıları çok yakında paylaşacaktır.
               </p>
               <Link 
@@ -117,8 +147,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           )}
 
           {/* Footer */}
-          <footer className="w-full mt-40 pb-20 text-center border-t border-black/5 pt-20">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">
+          <footer className="w-full mt-40 pb-20 text-center border-t border-black/5 dark:border-white/5 pt-20">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-zinc-500">
               © 2026 Radyle Magazine
             </p>
           </footer>

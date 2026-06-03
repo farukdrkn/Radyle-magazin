@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@variant dark (&:where(.dark, .dark *));
+
 @keyframes marquee {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
@@ -22,8 +24,15 @@
 }
 
 body {
+  background-image: url('/zekran.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
 }
-
+html.dark body {
+  background-image: url('/zekrangece.jpg');
+}
 .content-wrapper {
   background-image: url('/zekran.jpg');
   background-repeat: repeat; 

@@ -1,20 +1,33 @@
-"use client"
-
 import React from 'react'
+import type { Metadata } from 'next'
 import './styles.css'
 import Header from '@/components/Header'
-import { usePathname } from 'next/navigation'
+import { ThemeProvider } from '@/components/ThemeProvider'
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Radyle | Yeni Nesil Dijital Dergi',
+    template: '%s | Radyle',
+  },
+  description: 'Modaya dair her şey, markalar nasıl kuruldu, dahi tasarımcıların hayatı, en ikonik parçalar... Radyle modanın merkezi.',
+  openGraph: {
+    title: 'Radyle | Yeni Nesil Dijital Dergi',
+    description: 'Modaya dair her şey, markalar nasıl kuruldu, dahi tasarımcıların hayatı, en ikonik parçalar... Radyle modanın merkezi.',
+    type: 'website',
+    locale: 'tr_TR',
+    url: 'https://radyle.com',
+    siteName: 'Radyle',
+  },
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const isFaruk = pathname?.startsWith('/faruk')
-
   return (
-    <html lang="tr" className="bg-transparent">
-      <body className="min-h-screen !bg-[url('/zekran.jpg')] !bg-cover !bg-fixed !bg-center text-black">
-        {/* Admin sayfalarında ana Header'ı gizliyoruz */}
-        {!isFaruk && <Header />}
-        <main className="bg-transparent">{children}</main>
+    <html lang="tr" suppressHydrationWarning>
+      <body className="min-h-screen text-black dark:text-white transition-colors duration-300">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Header />
+          <main className="bg-transparent">{children}</main>
+        </ThemeProvider>
       </body>
     </html>
   )
