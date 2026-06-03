@@ -4,6 +4,7 @@ import './styles.css'
 import Header from '@/components/Header'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { GoogleAnalytics } from '@next/third-parties/google'
+import CookieBanner from '@/components/CookieBanner'
 
 export const metadata: Metadata = {
   title: {
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main className="bg-transparent">{children}</main>
         </ThemeProvider>
+        <CookieBanner />
         <GoogleAnalytics gaId="G-KV0E8VPNE9" />
       </body>
     </html>
