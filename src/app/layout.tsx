@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     template: '%s | Radyle',
   },
   description: 'Modaya dair her şey, markalar nasıl kuruldu, dahi tasarımcıların hayatı, en ikonik parçalar... Radyle modanın merkezi.',
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/apple-icon.png',
+  },
   openGraph: {
     title: 'Radyle | Yeni Nesil Dijital Dergi',
     description: 'Modaya dair her şey, markalar nasıl kuruldu, dahi tasarımcıların hayatı, en ikonik parçalar... Radyle modanın merkezi.',
