@@ -50,15 +50,19 @@ interface LayoutBlock {
 const generateSlug = (name: string) => {
   const trMap: { [key: string]: string } = {
     'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
-    'Ç': 'C', 'Ğ': 'G', 'İ': 'I', 'Ö': 'O', 'Ş': 'S', 'Ü': 'U'
+    'Ç': 'c', 'Ğ': 'g', 'İ': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u'
   }
   return name
     .split('')
     .map(c => trMap[c] || c)
     .join('')
     .toLowerCase()
-    .replace(/ /g, '-')
+    .trim()
+    .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '')
 }
 
 function PublishPageContent() {

@@ -98,7 +98,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <main className="w-full min-h-screen bg-transparent">
       <div className="w-full min-h-screen bg-transparent">
-        <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20 py-10 sm:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-10 sm:py-20">
           
           {/* Category Header */}
           <div className="w-full text-center mb-16">

@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import Image from 'next/image'
 
 interface LayoutBlock {
   text: string
@@ -77,11 +78,29 @@ export default async function ReadingPage({ params }: { params: Promise<{ id: st
   const blocks = (post.layout_data as LayoutBlock[]) || []
   const coverUrl = resolveMediaUrl(post.cover_url)
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: post.title,
+    image: coverUrl ? [coverUrl] : [],
+    datePublished: post.created_at ? new Date(post.created_at).toISOString() : new Date().toISOString(),
+    author: [
+      {
+        '@type': 'Person',
+        name: 'Radyle',
+      },
+    ],
+  }
+
   return (
     <main className="w-full min-h-screen bg-transparent">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="w-full min-h-screen bg-transparent">
         {/* Centered Container for the entire page content */}
-        <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20 bg-transparent relative shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 bg-transparent relative shadow-2xl">
           <div className="relative z-10 bg-transparent">
             {/* Header/Nav */}
             <nav className="p-6 md:p-10 absolute top-0 left-0 w-full z-50">
@@ -95,13 +114,19 @@ export default async function ReadingPage({ params }: { params: Promise<{ id: st
 
             {/* Hero Section - Constrained to max-w-5xl via parent */}
             <section 
-              className="h-[80vh] w-full flex flex-col items-center justify-center p-10 md:p-20 text-center relative overflow-hidden"
+              className="relative w-full aspect-video md:aspect-auto md:h-[400px] flex flex-col items-center justify-center p-6 md:p-20 text-center overflow-hidden"
             >
               {coverUrl && (
-                <div 
-                  className="absolute inset-0 z-0 bg-cover bg-center bg-fixed"
-                  style={{ backgroundImage: `url(${coverUrl})` }}
-                />
+                <div className="absolute inset-0 z-0 bg-center">
+                  <Image 
+                    src={coverUrl} 
+                    alt={post.title || 'Radyle Article'} 
+                    fill 
+                    priority 
+                    sizes="(max-width: 1024px) 100vw, 1024px"
+                    className="object-cover"
+                  />
+                </div>
               )}
               <div className="absolute inset-0 bg-black/50 z-10" />
               

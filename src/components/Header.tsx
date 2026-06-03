@@ -81,7 +81,7 @@ export default function Header() {
       <header className="w-full sticky top-0 z-50">
         <div className="bg-white dark:bg-zinc-950 border-b border-gray-100 dark:border-zinc-800 shadow-sm transition-colors duration-300">
           {/* Main Header - Aligned with content */}
-          <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20 h-20 flex items-center justify-between gap-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 h-20 flex items-center justify-between gap-4">
             
             {/* Left: Logo */}
             <div className="flex-1 flex justify-start items-center">
@@ -129,7 +129,7 @@ export default function Header() {
 
           {/* Black Category Nav Bar - Infinite Marquee */}
           <div className="w-full bg-black text-white overflow-hidden marquee-wrapper">
-            <div className="max-w-5xl mx-auto px-6 sm:px-12 lg:px-20 overflow-hidden h-12 flex items-center">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 overflow-hidden h-12 flex items-center">
               <div className="marquee-container">
                 {/* Large set of categories for gapless loop */}
                 <div className="flex items-center">
