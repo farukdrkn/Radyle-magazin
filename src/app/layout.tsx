@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import './styles.css'
 import Header from '@/components/Header'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 export const metadata: Metadata = {
   title: {
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main className="bg-transparent">{children}</main>
         </ThemeProvider>
+        <GoogleAnalytics gaId="G-KV0E8VPNE9" />
       </body>
     </html>
   )
